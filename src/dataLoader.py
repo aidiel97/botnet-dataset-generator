@@ -53,8 +53,13 @@ nccLocal = {
   'scenario13': datasetLocation+ncc+'/scenario_dataset_13/dataset_result.binetflow',
 }
 
-
 def loadDataset(dataset, scenario):
   fileName = dataset[scenario] #load dataset
   raw_df=pd.read_csv(fileName)
   return raw_df
+
+def loadSplitActivity(url, scenario, activity):
+  filename = url+str(scenario)+'/'+activity+'.csv'
+  print(filename)
+  df = pd.read_csv(filename)
+  return df
