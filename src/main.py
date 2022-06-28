@@ -6,9 +6,13 @@ from extract import *
 from simulate import *
 
 if __name__ == "__main__":
-    # datasetName = ctuLocal
+#extract
+    # datasetName = ctu
     # for i in range(1,14):
     #     selectedScenario = 'scenario'+str(i)
     #     df = loadDataset(datasetName, selectedScenario)
-    #     splitActivity(df, i)
-    simulation(1)
+    #     splitActivity('ctu', df, i)
+#simulation
+    # simulation(3, 3,4,1,2,8,12,5)
+#merging sensors
+    mergingAllSensors()
