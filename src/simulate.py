@@ -1,7 +1,6 @@
 import pandas as pd
-import glob
-import os
-from datetime import datetime, timedelta
+import dask.dataframe as dd
+
 from dataLoader import *
 urlExtractData = '../extract/ctu/'
 urlExtractDataNCC = '../extract/ncc/'
@@ -15,9 +14,9 @@ def simulation(sensorId, a,b,c,d,e,f,g):
     bot_dff = loadSplitActivity(urlExtractDataNCC, f, 'botnet')
     bot_dfg = loadSplitActivity(urlExtractDataNCC, g, 'botnet')
 
-    # normal_dfa = loadSplitActivity(urlExtractDataNCC, a, 'normal')
-    # normal_dfb = loadSplitActivity(urlExtractDataNCC, b, 'normal')
-    # normal_dfc = loadSplitActivity(urlExtractDataNCC, c, 'normal')
+    normal_dfa = loadSplitActivity(urlExtractDataNCC, a, 'normal')
+    normal_dfb = loadSplitActivity(urlExtractDataNCC, b, 'normal')
+    normal_dfc = loadSplitActivity(urlExtractDataNCC, c, 'normal')
     normal_dfd = loadSplitActivity(urlExtractDataNCC, d, 'normal')
     normal_dfe = loadSplitActivity(urlExtractDataNCC, e, 'normal')
     normal_dff = loadSplitActivity(urlExtractDataNCC, f, 'normal')
@@ -25,7 +24,7 @@ def simulation(sensorId, a,b,c,d,e,f,g):
     print('datasets loaded')
 
     botList = [bot_dfa,bot_dfb,bot_dfc,bot_dfd,bot_dfe,bot_dff,bot_dfg]
-    normalList = [ normal_dfd,normal_dfe,normal_dff,normal_dfg]
+    normalList = [normal_dfd,normal_dfe,normal_dff,normal_dfg]
     allList = botList + normalList
 
     #concat
@@ -69,46 +68,22 @@ def simulation(sensorId, a,b,c,d,e,f,g):
     df_result.to_csv('../result/sensor'+str(sensorId)+'.binetflow', index=False)
     print('storing all data success')
 
-import dask.dataframe as dd
-import operator
-import sys
-import csv
 def mergingAllSensors():
-    # # setting the path for joining multiple files
-    # files = os.path.join("C:/its/6-code/botnetDatasetGenerator/result/", "sensor*.binetflow")
+    sensorAll = open('../result/all-sensors.binetflow', 'a')
+    sensor1 = open('../result/sensor1.binetflow', 'r')
+    sensor2 = open('../result/sensor2.binetflow', 'r')
+    sensor3 = open('../result/sensor3.binetflow', 'r')
 
-    # # list of merged files returned
-    # # files = glob.glob(files)
-    # sensor1 = pd.read_csv('../result/sensor1.binetflow')
-    # sensor2 = pd.read_csv('../result/sensor2.binetflow')
-    # sensor3 = pd.read_csv('../result/sensor3.binetflow')
-
-    # # joining files with concat and read_csv
-    # df = pd.concat([sensor1, sensor2, sensor3])
-    # print('concat success')
-
-    # df.sort_values('StartTime')
-    # df.reset_index(drop=True)
-    # print('sorting success')
-
-    # df.to_csv('allSensors.csv', index=False)
-    # print('storing data success')
-
-    # sensorAll = open('../result/all-sensors.binetflow', 'a')
-    # sensor1 = open('../result/sensor1.binetflow', 'r')
-    # sensor2 = open('../result/sensor2.binetflow', 'r')
-    # sensor3 = open('../result/sensor3.binetflow', 'r')
-
-    # print('start merging data from sensors')
-    # for sensors in [sensor1, sensor2, sensor3]:
-    #     for line in sensors:
-    #         sensorAll.write(line)
+    print('start merging data from sensors')
+    for sensors in [sensor1, sensor2, sensor3]:
+        for line in sensors:
+            sensorAll.write(line)
     
-    # print('success merging all sensors')
-    # sensorAll.close()
-    # sensor1.close()
-    # sensor2.close()
-    # sensor3.close()
+    print('success merging all sensors')
+    sensorAll.close()
+    sensor1.close()
+    sensor2.close()
+    sensor3.close()
 
     # sorting with dask
     df = dd.read_csv('../result/all-sensors.binetflow',dtype={
@@ -123,27 +98,10 @@ def mergingAllSensors():
             'Dport':'object',
             'Sport':'object'
         })
-    # df.reset_index(drop=True)
+
     sorted_df = df.sort_values("StartTime")
     print('sorting success')
-    
-    # sorted_df.reset_index(drop=True)
-    
-    #storing with pandas
-    sorted_df.to_csv('../result/all-sensors-1.binetflow', single_file=True, index=False)
+
+    #storing data with dask
+    sorted_df.to_csv('../result/all-sensors.binetflow', single_file=True, index=False)
     print('storing data success')
-
-    # reader = csv.reader(open('../result/all-sensors.binetflow'), delimiter=',')
-    # sortedlist = sorted(reader, key=lambda row: row[1], reverse=True)
-
-    # with open('final.csv', 'w', encoding='UTF8', newline='') as f:
-    #     writer = csv.writer(f)
-    #     header = ['StartTime','Dur','Proto','SrcAddr','Sport','Dir','DstAddr',
-    #         'Dport','State','sTos','dTos','TotPkts','TotBytes','SrcBytes','Label',
-    #         'activityLabel','bonetName','sensorId']
-
-    #     # write the header
-    #     writer.writerow(header)
-
-    #     # write multiple rows
-    #     writer.writerows(sortedlist)
