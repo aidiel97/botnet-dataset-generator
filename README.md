@@ -3,22 +3,32 @@ in supporting botnet paralel detection, the dataset is required. This is the res
 
 Steps:
 1. first create a folder with the following conditions:
-  /src
-  /result
-  /extract
-    -/ctu
-      -/1
-      -/2
-      -...
-      -/13
-    -/ncc
-      -/1
-      -/2
-      -...
-      -/13
- 2. Then you can execute main.py, and follow the menu
- 3. Finally, you can check the result of generation at /result folder
- 
- --I really need input and suggestions so that this code becomes more userfriendly--
+```bash
+  ├── src
+  │   ├── dataLoader.py
+  │   └── extract.py
+  │   └── maint.py
+  │   └── simulate.py
+  ├── extract
+  │   ├── ctu
+  |   │   ├── 1
+  |   │   ├── 2
+  |   │   ├── 3
+  |   │   ├── ...
+  |   │   └── 13
+  │   └── ncc
+  |       ├── 1
+  |       ├── 2
+  |       ├── 3
+  |       ├── ...
+  |       └── 13
+  ├── result
+  ├── .gitignore
+  └── README.md
+ ```
+3. adjust the location of your dataset on /src/dataloader.py (datasetLocation)
+4. Then you can execute main.py, and follow the menu
+5. Finally, you can check the result of generation at /result folder
 
+--I really need input and suggestions so that this code becomes more userfriendly--
 Thank You
