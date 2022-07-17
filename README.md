@@ -28,7 +28,7 @@ Steps:
   ├── result
   ├── .gitignore
   └── README.md
- ```bash
- --I really need input and suggestions so that this code becomes more userfriendly--
+ ```
 
+--I really need input and suggestions so that this code becomes more userfriendly--
 Thank You
