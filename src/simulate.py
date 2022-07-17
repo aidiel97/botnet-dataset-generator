@@ -1,75 +1,82 @@
 import pandas as pd
 import dask.dataframe as dd
+import random
 
 from dataLoader import *
 urlExtractData = '../extract/ctu/'
 urlExtractDataNCC = '../extract/ncc/'
 
 def simulation(sensorId, a,b,c,d,e,f,g):
-    bot_dfa = loadSplitActivity(urlExtractDataNCC, a, 'botnet')
-    bot_dfb = loadSplitActivity(urlExtractDataNCC, b, 'botnet')
-    bot_dfc = loadSplitActivity(urlExtractDataNCC, c, 'botnet')
-    bot_dfd = loadSplitActivity(urlExtractDataNCC, d, 'botnet')
-    bot_dfe = loadSplitActivity(urlExtractDataNCC, e, 'botnet')
-    bot_dff = loadSplitActivity(urlExtractDataNCC, f, 'botnet')
-    bot_dfg = loadSplitActivity(urlExtractDataNCC, g, 'botnet')
+    print("\n====================================Simulation for Sensor "+str(sensorId)+" START==")
 
-    normal_dfa = loadSplitActivity(urlExtractDataNCC, a, 'normal')
-    normal_dfb = loadSplitActivity(urlExtractDataNCC, b, 'normal')
-    normal_dfc = loadSplitActivity(urlExtractDataNCC, c, 'normal')
-    normal_dfd = loadSplitActivity(urlExtractDataNCC, d, 'normal')
-    normal_dfe = loadSplitActivity(urlExtractDataNCC, e, 'normal')
-    normal_dff = loadSplitActivity(urlExtractDataNCC, f, 'normal')
-    normal_dfg = loadSplitActivity(urlExtractDataNCC, g, 'normal')
-    print('datasets loaded')
+    botList = []
+    for dataframes in [a,b,c,d,e,f,g]:
+        bot_df = loadSplitActivity(urlExtractDataNCC, dataframes, 'botnet')
+        botList.append(bot_df)
+    print('--------------------------------bot datasets loaded')
 
-    botList = [bot_dfa,bot_dfb,bot_dfc,bot_dfd,bot_dfe,bot_dff,bot_dfg]
-    normalList = [normal_dfd,normal_dfe,normal_dff,normal_dfg]
+    normalList = []
+    listNormalForLoad = random.sample([a,b,c,d,e,f,g], 4)
+    for dataframes in listNormalForLoad:
+        if(listNormalForLoad.index(dataframes) == sensorId):
+            normal_df = loadSplitActivity(urlExtractDataNCC, dataframes, 'normal')
+        else:
+            normal_df = loadSplitActivity(urlExtractData, dataframes, 'normal')
+        normalList.append(normal_df)
+    print('--------------------------------normal datasets loaded')
+
+    #merge all list
     allList = botList + normalList
 
     #concat
     df_bot = pd.concat(botList)
     df_normal = pd.concat(normalList)
     df_result = pd.concat(allList)
-    print('dataset concated')
+    print('...dataset concated!')
 
     #adding sensor id
-    df_bot['sensorId'] = sensorId
-    df_normal['sensorId'] = sensorId
-    df_result['sensorId'] = sensorId
+    df_bot['SensorId'] = sensorId
+    df_normal['SensorId'] = sensorId
+    df_result['SensorId'] = sensorId
 
     #sort by StartTime
-    df_bot.sort_values(by='syntheticTime', inplace=True)
+    df_bot.sort_values(by='SyntheticTime', inplace=True)
     df_bot.reset_index(drop=True, inplace=True)
 
-    df_normal.sort_values(by='syntheticTime', inplace=True)
+    df_normal.sort_values(by='SyntheticTime', inplace=True)
     df_normal.reset_index(drop=True, inplace=True)
 
-    df_result.sort_values(by='syntheticTime', inplace=True)
+    df_result.sort_values(by='SyntheticTime', inplace=True)
     df_result.reset_index(drop=True, inplace=True)
-    print('sorting success')
+    print('...sorting success!')
 
     #formatting
-    df_bot['StartTime'] = df_bot['syntheticTime']
-    df_bot.drop('diff', inplace=True, axis=1)
-    df_bot.drop('syntheticTime', inplace=True, axis=1)
+    df_bot['StartTime'] = df_bot['SyntheticTime']
+    df_bot.drop('Diff', inplace=True, axis=1)
+    df_bot.drop('SyntheticTime', inplace=True, axis=1)
+    df_bot.drop('Limit', inplace=True, axis=1)
     df_bot.to_csv('../result/sensor'+str(sensorId)+'_botnet-only.binetflow', index=False)
-    print('storing data bot success')
+    print('...bot data stored!')
 
-    df_normal['StartTime'] = df_normal['syntheticTime']
-    df_normal.drop('diff', inplace=True, axis=1)
-    df_normal.drop('syntheticTime', inplace=True, axis=1)
+    df_normal['StartTime'] = df_normal['SyntheticTime']
+    df_normal.drop('Diff', inplace=True, axis=1)
+    df_normal.drop('SyntheticTime', inplace=True, axis=1)
+    df_normal.drop('Limit', inplace=True, axis=1)
     df_normal.to_csv('../result/sensor'+str(sensorId)+'_normal-only.binetflow', index=False)
-    print('storing data normal success')
+    print('...normal data stored!')
 
-    df_result['StartTime'] = df_result['syntheticTime']
-    df_result.drop('diff', inplace=True, axis=1)
-    df_result.drop('syntheticTime', inplace=True, axis=1)
+    df_result['StartTime'] = df_result['SyntheticTime']
+    df_result.drop('Diff', inplace=True, axis=1)
+    df_result.drop('SyntheticTime', inplace=True, axis=1)
+    df_result.drop('Limit', inplace=True, axis=1)
     df_result.to_csv('../result/sensor'+str(sensorId)+'.binetflow', index=False)
-    print('storing all data success')
+    print('...all data stored!')
+    
+    print("====================================Simulation for Sensor "+str(sensorId)+" END==")
 
 def mergingAllSensors():
-    sensorAll = open('../result/all-sensors.binetflow', 'a')
+    print("\n====================================Merging Process START==")
+    sensorAll = open('../result/sensors-all.binetflow', 'a')
     sensor1 = open('../result/sensor1.binetflow', 'r')
     sensor2 = open('../result/sensor2.binetflow', 'r')
     sensor3 = open('../result/sensor3.binetflow', 'r')
@@ -86,15 +93,15 @@ def mergingAllSensors():
     sensor3.close()
 
     # sorting with dask
-    df = dd.read_csv('../result/all-sensors.binetflow',dtype={
+    df = dd.read_csv('../result/sensors-all.binetflow',dtype={
             'Dur': 'object',
             'SrcBytes': 'object',
             'TotBytes': 'object',
             'TotPkts': 'object',
-            'activityLabel': 'object',
+            'ActivityLabel': 'object',
             'dTos': 'object',
             'sTos': 'object',
-            'sensorId': 'object',
+            'SensorId': 'object',
             'Dport':'object',
             'Sport':'object'
         })
@@ -103,5 +110,61 @@ def mergingAllSensors():
     print('sorting success')
 
     #storing data with dask
-    sorted_df.to_csv('../result/all-sensors.binetflow', single_file=True, index=False)
+    sorted_df.to_csv('../result/sensors-all.binetflow', single_file=True, index=False)
     print('storing data success')
+    
+    print("====================================Merging Process END==")
+
+def analytics(sensor):
+    print("\n====================================Analysis for Sensor "+str(sensor)+" START==")
+    idSensor = sensor
+    fileName = '../result/sensor'+str(idSensor)+'.binetflow' #load from generator
+    raw_df=pd.read_csv(fileName)
+    raw_df['StartTimeHour'] = raw_df['StartTime'].str[:13]
+    raw_df['StartTimeMinute'] = raw_df['StartTime'].str[:16]
+    
+    normal_df=raw_df[raw_df['ActivityLabel'].isin([0])]
+    bot_df=raw_df[raw_df['ActivityLabel'].isin([1])]
+    
+    with open('../result/sensor'+str(idSensor)+'.txt', 'w') as f:
+        total = normal_df.shape[0] + bot_df.shape[0]
+        bot_percent = bot_df.shape[0]/total*100
+        normal_percent = normal_df.shape[0]/total*100
+
+        f.write('\ntotal traffic: '+str(total))
+        f.write('\nbot traffic: '+str(bot_df.shape[0])+' ('+str(bot_percent)+'%)')
+        f.write('\nnormal traffic: '+str(normal_df.shape[0])+' ('+str(normal_percent)+'%)')
+
+    print('sensor'+str(idSensor)+'.txt created!')
+
+    #groupbyhour
+    botgroup_df = bot_df.groupby(['StartTimeHour'])['StartTime'].count().reset_index(name='bot')
+    botgroup_df['Hour'] = botgroup_df.index
+
+    normalgroup_df = normal_df.groupby(['StartTimeHour'])['StartTime'].count().reset_index(name='normal')
+    normalgroup_df['Hour'] = normalgroup_df.index
+
+    ax = botgroup_df.plot(x="Hour", y="bot", color="red")
+    normalgroup_df.plot(ax=ax, x="Hour", y="normal", color="green", title="Sensor "+str(idSensor)+" Detail in Hours")
+
+    ax.set_xlabel("Hours")
+    ax.set_ylabel("Activity Count")
+    ax.figure.savefig('../result/sensor'+str(idSensor)+'-detail-hours.png', transparent=False)
+    print('sensor'+str(idSensor)+'-detail-hours.png created!')
+
+    #groupbyMinutes
+    botgroup_df = bot_df.groupby(['StartTimeMinute'])['StartTime'].count().reset_index(name='bot')
+    botgroup_df['Minute'] = botgroup_df.index
+
+    normalgroup_df = normal_df.groupby(['StartTimeMinute'])['StartTime'].count().reset_index(name='normal')
+    normalgroup_df['Minute'] = normalgroup_df.index
+
+    ax = botgroup_df.plot(x="Minute", y="bot", color="red")
+    normalgroup_df.plot(ax=ax, x="Minute", y="normal", color="green", title="Sensor "+str(idSensor)+" Detail in Minutes")
+
+    ax.set_xlabel("Minutes")
+    ax.set_ylabel("Activity Count")
+    ax.figure.savefig('../result/sensor'+str(idSensor)+'-detail-minutes.png', transparent=False)
+    print('sensor'+str(idSensor)+'-detail-minutes.png created!')
+
+    print("====================================Analysis for Sensor "+str(sensor)+" END==")
