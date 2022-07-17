@@ -1,3 +1,5 @@
+import warnings
+warnings.filterwarnings('ignore')
 import pandas as pd
 
 botName = {
@@ -17,30 +19,46 @@ botName = {
 }
 
 def splitActivity(datasetName, df, scenario):
+    print("\n====================Extracting "+datasetName+" Scenario"+str(scenario)+" START==")
+    #sorting & remove index
+    df.sort_values(by='StartTime', inplace=True)
+    df.reset_index(drop=True, inplace=True)
+
     #create new label for bot prediciton(1/0)
-    df['activityLabel'] = df['Label'].str.contains('botnet', case=False, regex=True).astype(int)
-    syntheticTime="2022/06/18 00:00:00.000"
+    df['ActivityLabel'] = df['Label'].str.contains('botnet', case=False, regex=True).astype(int)
+    syntheticTime="2022/07/07 09:00:00.000"
+    limitTime="2022/07/07 17:00:01.000"
 
     #create new dataframe only botnet
-    botnet = df['activityLabel'] == 1
+    botnet = df['ActivityLabel'] == 1
     botnet_df = df[botnet]
     botnet_df.reset_index(drop=True, inplace=True)
-    botnet_df['bonetName'] = botName[scenario]
-    botnet_df['diff'] = pd.to_datetime(botnet_df['StartTime']) - pd.to_datetime(botnet_df['StartTime'][0])
-    botnet_df['syntheticTime'] = pd.to_datetime(syntheticTime) + pd.to_timedelta(botnet_df['diff'], unit='s')
+    botnet_df['BotnetName'] = botName[scenario]
+    botnet_df['Diff'] = pd.to_datetime(botnet_df['StartTime'].str[:19]) - pd.to_datetime(botnet_df['StartTime'].str[:19][0])
+    botnet_df['SyntheticTime'] = pd.to_datetime(syntheticTime) + pd.to_timedelta(botnet_df['Diff'], unit='s')
+    botnet_df['Limit'] = pd.to_datetime(botnet_df['SyntheticTime']) < pd.to_datetime(limitTime)
+    
+    limitedbot = botnet_df['Limit'] == True
+    botnet_df_limited = botnet_df[limitedbot]
 
     #create new dataframe only normal
-    normal = df['activityLabel'] == 0
+    normal = df['ActivityLabel'] == 0
     normal_df = df[normal]
     normal_df.reset_index(drop=True, inplace=True)
-    normal_df['bonetName'] = '-'
-    normal_df['diff'] = pd.to_datetime(normal_df['StartTime']) - pd.to_datetime(normal_df['StartTime'][0])
-    normal_df['syntheticTime'] = pd.to_datetime(syntheticTime) + pd.to_timedelta(normal_df['diff'], unit='s')
+    normal_df['BotnetName'] = '-'
+    normal_df['Diff'] = pd.to_datetime(normal_df['StartTime'].str[:19]) - pd.to_datetime(normal_df['StartTime'].str[:19][0])
+    normal_df['SyntheticTime'] = pd.to_datetime(syntheticTime) + pd.to_timedelta(normal_df['Diff'], unit='s')
+    normal_df['Limit'] = pd.to_datetime(normal_df['SyntheticTime']) < pd.to_datetime(limitTime)
+
+    limitedNormal = normal_df['Limit'] == True
+    normal_df_limited = normal_df[limitedNormal]
 
     #export botnet to csv
-    botnet_df.to_csv('../extract/'+datasetName+'/'+str(scenario)+'/botnet.csv', index=False)
+    botnet_df_limited.to_csv('../extract/'+datasetName+'/'+str(scenario)+'/botnet.csv', index=False)
     print('extract botnet scenario '+str(scenario)+' success!')
 
     #export normal to csv
-    normal_df.to_csv('../extract/'+datasetName+'/'+str(scenario)+'/normal.csv', index=False)
+    normal_df_limited.to_csv('../extract/'+datasetName+'/'+str(scenario)+'/normal.csv', index=False)
     print('extract normal scenario '+str(scenario)+' success!')
+
+    print("====================Extracting "+datasetName+" Scenario"+str(scenario)+" END==")

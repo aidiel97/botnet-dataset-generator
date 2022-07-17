@@ -60,12 +60,12 @@ def loadDataset(dataset, scenario):
 
 def loadSplitActivity(url, scenario, activity):
   filename = url+str(scenario)+'/'+activity+'.csv'
-  print(filename)
+  print("Load: "+filename)
   df = pd.read_csv(filename)
   return df
 
 def loadSensorsData(url, sensorId):
   filename = url+str(sensorId)+'.binetflow'
-  print(filename)
+  print("Load: "+filename)
   df = pd.read_csv(filename)
   return df
