@@ -3,9 +3,6 @@ in supporting botnet paralel detection, the dataset is required. This is the res
 
 Steps:
 1. first create a folder with the following conditions:
-2. adjust the location of your dataset on /src/dataloader.py (datasetLocation)
-3. Then you can execute main.py, and follow the menu
-4. Finally, you can check the result of generation at /result folder
 ```bash
   ├── src
   │   ├── dataLoader.py
@@ -29,6 +26,9 @@ Steps:
   ├── .gitignore
   └── README.md
  ```
+3. adjust the location of your dataset on /src/dataloader.py (datasetLocation)
+4. Then you can execute main.py, and follow the menu
+5. Finally, you can check the result of generation at /result folder
 
 --I really need input and suggestions so that this code becomes more userfriendly--
 Thank You
