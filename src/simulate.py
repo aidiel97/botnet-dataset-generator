@@ -2,10 +2,8 @@ import pandas as pd
 import dask.dataframe as dd
 import random
 
+from utilities.common import *
 from utilities.dataLoader import *
-from utilities.globalConfig import URL_EXTRACTED_DATA
-urlExtractData = URL_EXTRACTED_DATA+'ctu/'
-urlExtractDataNCC = URL_EXTRACTED_DATA+'ncc/'
 
 def simulation(sensorId, a,b,c,d,e,f,g):
     print("\n====================================Simulation for Sensor "+str(sensorId)+" START==")
@@ -94,18 +92,7 @@ def mergingAllSensors():
     sensor3.close()
 
     # sorting with dask
-    df = dd.read_csv('../result/sensors-all.binetflow',dtype={
-            'Dur': 'object',
-            'SrcBytes': 'object',
-            'TotBytes': 'object',
-            'TotPkts': 'object',
-            'ActivityLabel': 'object',
-            'dTos': 'object',
-            'sTos': 'object',
-            'SensorId': 'object',
-            'Dport':'object',
-            'Sport':'object'
-        })
+    df = dd.read_csv('../result/sensors-all.binetflow',dtype=csvDType)
 
     sorted_df = df.sort_values("StartTime")
     print('sorting success')

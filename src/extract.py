@@ -3,22 +3,7 @@ import warnings
 warnings.filterwarnings('ignore')
 
 from utilities.dataLoader import *
-
-botName = {
-    1:'neris',
-    2:'neris',
-    3: 'rbot',
-    4: 'rbot',
-    5: 'virut',
-    6: 'menti',
-    7: 'sogou',
-    8: 'murlo',
-    9: 'neris',
-    10: 'rbot',
-    11: 'rbot',
-    12: 'nsis.ay',
-    13: 'virut'
-}
+from utilities.common import *
 
 def splitActivity(datasetName, df, scenario):
     print("\n====================Extracting "+datasetName+" Scenario"+str(scenario)+" START==")
@@ -28,8 +13,6 @@ def splitActivity(datasetName, df, scenario):
 
     #create new label for bot prediciton(1/0)
     df['ActivityLabel'] = df['Label'].str.contains('botnet', case=False, regex=True).astype(int)
-    syntheticTime="2022/07/07 09:00:00.000"
-    limitTime="2022/07/07 17:00:01.000"
 
     #create new dataframe only botnet
     botnet = df['ActivityLabel'] == 1

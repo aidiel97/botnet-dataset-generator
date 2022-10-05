@@ -1,15 +1,10 @@
-from utilities.dataLoader import *
-from src.extract import *
-from src.simulate import *
 import time
 import os
 
-listMenu = [
-    "Extract Source Dataset",
-    "Start Simulation",
-    "Merging All Sensors",
-    "EXIT"
-]
+from src.extract import *
+from src.simulate import *
+from utilities.common import *
+from utilities.dataLoader import *
 
 def banner():
     print("\n\n================================================================")
