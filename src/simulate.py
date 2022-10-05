@@ -2,9 +2,10 @@ import pandas as pd
 import dask.dataframe as dd
 import random
 
-from dataLoader import *
-urlExtractData = '../extract/ctu/'
-urlExtractDataNCC = '../extract/ncc/'
+from utilities.dataLoader import *
+from utilities.globalConfig import URL_EXTRACTED_DATA
+urlExtractData = URL_EXTRACTED_DATA+'ctu/'
+urlExtractDataNCC = URL_EXTRACTED_DATA+'ncc/'
 
 def simulation(sensorId, a,b,c,d,e,f,g):
     print("\n====================================Simulation for Sensor "+str(sensorId)+" START==")
@@ -168,3 +169,17 @@ def analytics(sensor):
     print('sensor'+str(idSensor)+'-detail-minutes.png created!')
 
     print("====================================Analysis for Sensor "+str(sensor)+" END==")
+
+#simulation
+def simulate():
+    simulation(1, 3,10,1,2,7,12,5)
+    analytics(1)
+    simulation(2, 10,11,1,2,9,6,13)
+    analytics(2)
+    simulation(3, 3,4,9,8,12,5,13)
+    analytics(3)
+
+#merging sensors
+def merge():
+    mergingAllSensors()
+    analytics('s-all')

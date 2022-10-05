@@ -1,6 +1,8 @@
+import pandas as pd
 import warnings
 warnings.filterwarnings('ignore')
-import pandas as pd
+
+from utilities.dataLoader import *
 
 botName = {
     1:'neris',
@@ -62,3 +64,22 @@ def splitActivity(datasetName, df, scenario):
     print('extract normal scenario '+str(scenario)+' success!')
 
     print("====================Extracting "+datasetName+" Scenario"+str(scenario)+" END==")
+
+#extract
+def extract():
+    print("\n******************")
+    print("Dataset Option: ")
+    print("1. CTU-13")
+    print("2. NCC")
+    print("******************")
+    datasetChoose = input("Select Dataset:")
+    if(datasetChoose == "1"):
+        datasetName = ctu
+        stringDatasetName = 'ctu'
+    else:
+        datasetName = ncc
+        stringDatasetName = 'ncc'
+    for i in range(1,14):
+        selectedScenario = 'scenario'+str(i)
+        df = loadDataset(datasetName, selectedScenario)
+        splitActivity(stringDatasetName, df, i)
