@@ -4,29 +4,32 @@ in supporting botnet paralel detection, the dataset is required. This is the res
 Steps:
 1. first create a folder with the following conditions:
 ```bash
-  ├── src
-  │   ├── dataLoader.py
-  │   └── extract.py
-  │   └── maint.py
-  │   └── simulate.py
   ├── extract
   │   ├── ctu
   |   │   ├── 1
   |   │   ├── 2
-  |   │   ├── 3
   |   │   ├── ...
   |   │   └── 13
   │   └── ncc
   |       ├── 1
   |       ├── 2
-  |       ├── 3
   |       ├── ...
   |       └── 13
   ├── result
+  ├── src
+  │   └── extract.py
+  │   └── simulate.py
+  ├── utilities
+  │   └── common.py
+  │   ├── dataLoader.py
+  │   └── globalConfig.py
+  │   └── menuManagement.py
+  ├── .env.example
   ├── .gitignore
+  ├── main.py
   └── README.md
  ```
-2. adjust the location of your dataset on /src/dataloader.py (datasetLocation)
+2. Rename '.env.example' to '.env', then adjust the variables
 3. Then you can execute main.py, and follow the menu
 4. Finally, you can check the result of generation at /result folder
 
