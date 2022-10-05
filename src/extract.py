@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 import warnings
 warnings.filterwarnings('ignore')
@@ -37,6 +38,14 @@ def splitActivity(datasetName, df, scenario):
 
     limitedNormal = normal_df['Limit'] == True
     normal_df_limited = normal_df[limitedNormal]
+
+    #Try to create directories first
+    try:
+        os.mkdir('./extract/')
+        os.mkdir('./extract/'+datasetName+'/')
+        os.mkdir('./extract/'+datasetName+'/'+str(scenario)+'/')
+    except:
+        print('Directories already exist!')
 
     #export botnet to csv
     botnet_df_limited.to_csv('../extract/'+datasetName+'/'+str(scenario)+'/botnet.csv', index=False)
