@@ -52,7 +52,7 @@ def simulation(sensorId, a,b,c,d,e,f,g):
 
     #Try to create directories first
     try:
-        os.mkdir('./result/sensor'+str(sensorId)+'/')
+        os.mkdir('../result/sensor'+str(sensorId)+'/')
     except:
         print('Directories already exist!')
 
