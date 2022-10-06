@@ -40,11 +40,11 @@ def splitActivity(datasetName, df, scenario):
     normal_df_limited = normal_df[limitedNormal]
 
     #export botnet to csv
-    botnet_df_limited.to_csv('../extract/'+datasetName+'/'+str(scenario)+'/botnet.csv', index=False)
+    botnet_df_limited.to_csv('extract/'+datasetName+'/'+str(scenario)+'/botnet.csv', index=False)
     print('extract botnet scenario '+str(scenario)+' success!')
 
     #export normal to csv
-    normal_df_limited.to_csv('../extract/'+datasetName+'/'+str(scenario)+'/normal.csv', index=False)
+    normal_df_limited.to_csv('extract/'+datasetName+'/'+str(scenario)+'/normal.csv', index=False)
     print('extract normal scenario '+str(scenario)+' success!')
 
     print("====================Extracting "+datasetName+" Scenario"+str(scenario)+" END==")

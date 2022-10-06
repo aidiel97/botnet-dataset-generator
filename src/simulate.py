@@ -55,31 +55,31 @@ def simulation(sensorId, a,b,c,d,e,f,g):
     df_bot.drop('Diff', inplace=True, axis=1)
     df_bot.drop('SyntheticTime', inplace=True, axis=1)
     df_bot.drop('Limit', inplace=True, axis=1)
-    df_bot.to_csv('../result/sensor'+str(sensorId)+'/sensor'+str(sensorId)+'_botnet-only.binetflow', index=False)
+    df_bot.to_csv('result/sensor'+str(sensorId)+'/sensor'+str(sensorId)+'_botnet-only.binetflow', index=False)
     print('...bot data stored!')
 
     df_normal['StartTime'] = df_normal['SyntheticTime']
     df_normal.drop('Diff', inplace=True, axis=1)
     df_normal.drop('SyntheticTime', inplace=True, axis=1)
     df_normal.drop('Limit', inplace=True, axis=1)
-    df_normal.to_csv('../result/sensor'+str(sensorId)+'/sensor'+str(sensorId)+'_normal-only.binetflow', index=False)
+    df_normal.to_csv('result/sensor'+str(sensorId)+'/sensor'+str(sensorId)+'_normal-only.binetflow', index=False)
     print('...normal data stored!')
 
     df_result['StartTime'] = df_result['SyntheticTime']
     df_result.drop('Diff', inplace=True, axis=1)
     df_result.drop('SyntheticTime', inplace=True, axis=1)
     df_result.drop('Limit', inplace=True, axis=1)
-    df_result.to_csv('../result/sensor'+str(sensorId)+'/sensor'+str(sensorId)+'.binetflow', index=False)
+    df_result.to_csv('result/sensor'+str(sensorId)+'/sensor'+str(sensorId)+'.binetflow', index=False)
     print('...all data stored!')
     
     print("====================================Simulation for Sensor "+str(sensorId)+" END==")
 
 def mergingAllSensors():
     print("\n====================================Merging Process START==")
-    sensorAll = open('../result/all-sensors/sensors-all.binetflow', 'a')
-    sensor1 = open('../result/sensor1/sensor1.binetflow', 'r')
-    sensor2 = open('../result/sensor2/sensor2.binetflow', 'r')
-    sensor3 = open('../result/sensor3/sensor3.binetflow', 'r')
+    sensorAll = open('result/all-sensors/sensors-all.binetflow', 'a')
+    sensor1 = open('result/sensor1/sensor1.binetflow', 'r')
+    sensor2 = open('result/sensor2/sensor2.binetflow', 'r')
+    sensor3 = open('result/sensor3/sensor3.binetflow', 'r')
 
     print('start merging data from sensors')
     for sensors in [sensor1, sensor2, sensor3]:
@@ -93,13 +93,13 @@ def mergingAllSensors():
     sensor3.close()
 
     # sorting with dask
-    df = dd.read_csv('../result/all-sensors/sensors-all.binetflow',dtype=csvDType)
+    df = dd.read_csv('result/all-sensors/sensors-all.binetflow',dtype=csvDType)
 
     sorted_df = df.sort_values("StartTime")
     print('sorting success')
 
     #storing data with dask
-    sorted_df.to_csv('../result/all-sensors/sensors-all.binetflow', single_file=True, index=False)
+    sorted_df.to_csv('result/all-sensors/sensors-all.binetflow', single_file=True, index=False)
     print('storing data success')
     
     print("====================================Merging Process END==")
@@ -107,7 +107,10 @@ def mergingAllSensors():
 def analytics(sensor):
     print("\n====================================Analysis for Sensor "+str(sensor)+" START==")
     idSensor = sensor
-    fileName = '../result/sensor'+str(idSensor)+'/sensor'+str(idSensor)+'.binetflow' #load from generator
+    if(str(idSensor) == 'all'):
+        fileName = 'result/all-sensors/sensors-all.binetflow' #load from generator
+    else:
+        fileName = 'result/sensor'+str(idSensor)+'/sensor'+str(idSensor)+'.binetflow' #load from generator
     raw_df=pd.read_csv(fileName)
     raw_df['StartTimeHour'] = raw_df['StartTime'].str[:13]
     raw_df['StartTimeMinute'] = raw_df['StartTime'].str[:16]
@@ -115,7 +118,7 @@ def analytics(sensor):
     normal_df=raw_df[raw_df['ActivityLabel'].isin([0])]
     bot_df=raw_df[raw_df['ActivityLabel'].isin([1])]
     
-    with open('../result/sensor'+str(idSensor)+'/sensor'+str(idSensor)+'.txt', 'w') as f:
+    with open('result/sensor'+str(idSensor)+'/sensor'+str(idSensor)+'.txt', 'w') as f:
         total = normal_df.shape[0] + bot_df.shape[0]
         bot_percent = bot_df.shape[0]/total*100
         normal_percent = normal_df.shape[0]/total*100
@@ -138,7 +141,7 @@ def analytics(sensor):
 
     ax.set_xlabel("Hours")
     ax.set_ylabel("Activity Count")
-    ax.figure.savefig('../result/sensor'+str(idSensor)+'/sensor'+str(idSensor)+'-detail-hours.png', transparent=False)
+    ax.figure.savefig('result/sensor'+str(idSensor)+'/sensor'+str(idSensor)+'-detail-hours.png', transparent=False)
     print('sensor'+str(idSensor)+'-detail-hours.png created!')
 
     #groupbyMinutes
@@ -153,7 +156,7 @@ def analytics(sensor):
 
     ax.set_xlabel("Minutes")
     ax.set_ylabel("Activity Count")
-    ax.figure.savefig('../result/sensor'+str(idSensor)+'/sensor'+str(idSensor)+'-detail-minutes.png', transparent=False)
+    ax.figure.savefig('result/sensor'+str(idSensor)+'/sensor'+str(idSensor)+'-detail-minutes.png', transparent=False)
     print('sensor'+str(idSensor)+'-detail-minutes.png created!')
 
     print("====================================Analysis for Sensor "+str(sensor)+" END==")
@@ -170,4 +173,4 @@ def simulate():
 #merging sensors
 def merge():
     mergingAllSensors()
-    analytics('s-all')
+    analytics('all')
