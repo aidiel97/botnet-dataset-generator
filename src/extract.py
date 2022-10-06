@@ -41,8 +41,8 @@ def splitActivity(datasetName, df, scenario):
 
     #Try to create directories first
     try:
-        # os.mkdir('./extract/')
-        # os.mkdir('./extract/'+datasetName+'/')
+        os.mkdir('./extract/')
+        os.mkdir('./extract/'+datasetName+'/')
         os.mkdir('./extract/'+datasetName+'/'+str(scenario)+'/')
     except:
         print('Directories already exist!')
