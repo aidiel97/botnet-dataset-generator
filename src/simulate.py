@@ -109,7 +109,13 @@ def analytics(sensor):
     idSensor = sensor
     if(str(idSensor) == 'all'):
         fileName = 'result/all-sensors/sensors-all.binetflow' #load from generator
+        txtFile = 'result/all-sensors/sensors-all.txt'
+        detailHour = 'result/all-sensors/sensors-all-detail-hours.png'
+        detailMinutes = 'result/all-sensors/sensors-all-detail-minutes.png'
     else:
+        detailHour = 'result/sensor'+str(idSensor)+'/sensor'+str(idSensor)+'-detail-hours.png'
+        detailMinutes = 'result/sensor'+str(idSensor)+'/sensor'+str(idSensor)+'-detail-minutes.png'
+        txtFile = 'result/sensor'+str(idSensor)+'/sensor'+str(idSensor)+'.txt'
         fileName = 'result/sensor'+str(idSensor)+'/sensor'+str(idSensor)+'.binetflow' #load from generator
     raw_df=pd.read_csv(fileName)
     raw_df['StartTimeHour'] = raw_df['StartTime'].str[:13]
@@ -118,7 +124,7 @@ def analytics(sensor):
     normal_df=raw_df[raw_df['ActivityLabel'].isin([0])]
     bot_df=raw_df[raw_df['ActivityLabel'].isin([1])]
     
-    with open('result/sensor'+str(idSensor)+'/sensor'+str(idSensor)+'.txt', 'w') as f:
+    with open(txtFile, 'w') as f:
         total = normal_df.shape[0] + bot_df.shape[0]
         bot_percent = bot_df.shape[0]/total*100
         normal_percent = normal_df.shape[0]/total*100
@@ -127,7 +133,7 @@ def analytics(sensor):
         f.write('\nbot traffic: '+str(bot_df.shape[0])+' ('+str(bot_percent)+'%)')
         f.write('\nnormal traffic: '+str(normal_df.shape[0])+' ('+str(normal_percent)+'%)')
 
-    print('sensor'+str(idSensor)+'.txt created!')
+    print(txtFile+' created!')
 
     #groupbyhour
     botgroup_df = bot_df.groupby(['StartTimeHour'])['StartTime'].count().reset_index(name='bot')
@@ -141,8 +147,8 @@ def analytics(sensor):
 
     ax.set_xlabel("Hours")
     ax.set_ylabel("Activity Count")
-    ax.figure.savefig('result/sensor'+str(idSensor)+'/sensor'+str(idSensor)+'-detail-hours.png', transparent=False)
-    print('sensor'+str(idSensor)+'-detail-hours.png created!')
+    ax.figure.savefig(detailHour, transparent=False)
+    print(detailHour+' created!')
 
     #groupbyMinutes
     botgroup_df = bot_df.groupby(['StartTimeMinute'])['StartTime'].count().reset_index(name='bot')
@@ -156,8 +162,8 @@ def analytics(sensor):
 
     ax.set_xlabel("Minutes")
     ax.set_ylabel("Activity Count")
-    ax.figure.savefig('result/sensor'+str(idSensor)+'/sensor'+str(idSensor)+'-detail-minutes.png', transparent=False)
-    print('sensor'+str(idSensor)+'-detail-minutes.png created!')
+    ax.figure.savefig(detailMinutes, transparent=False)
+    print(detailMinutes+' created!')
 
     print("====================================Analysis for Sensor "+str(sensor)+" END==")
 
