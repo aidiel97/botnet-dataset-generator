@@ -50,12 +50,6 @@ def simulation(sensorId, a,b,c,d,e,f,g):
     df_result.reset_index(drop=True, inplace=True)
     print('...sorting success!')
 
-    #Try to create directories first
-    try:
-        os.mkdir('../result/sensor'+str(sensorId)+'/')
-    except:
-        print('Directories already exist!')
-
     #formatting
     df_bot['StartTime'] = df_bot['SyntheticTime']
     df_bot.drop('Diff', inplace=True, axis=1)
@@ -82,7 +76,7 @@ def simulation(sensorId, a,b,c,d,e,f,g):
 
 def mergingAllSensors():
     print("\n====================================Merging Process START==")
-    sensorAll = open('../result/sensors-all.binetflow', 'a')
+    sensorAll = open('../result/all-sensors/sensors-all.binetflow', 'a')
     sensor1 = open('../result/sensor1/sensor1.binetflow', 'r')
     sensor2 = open('../result/sensor2/sensor2.binetflow', 'r')
     sensor3 = open('../result/sensor3/sensor3.binetflow', 'r')

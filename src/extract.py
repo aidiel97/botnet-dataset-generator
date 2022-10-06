@@ -39,14 +39,6 @@ def splitActivity(datasetName, df, scenario):
     limitedNormal = normal_df['Limit'] == True
     normal_df_limited = normal_df[limitedNormal]
 
-    #Try to create directories first
-    try:
-        os.mkdir('./extract/')
-        os.mkdir('./extract/'+datasetName+'/')
-        os.mkdir('./extract/'+datasetName+'/'+str(scenario)+'/')
-    except:
-        print('Directories already exist!')
-
     #export botnet to csv
     botnet_df_limited.to_csv('../extract/'+datasetName+'/'+str(scenario)+'/botnet.csv', index=False)
     print('extract botnet scenario '+str(scenario)+' success!')
@@ -71,6 +63,7 @@ def extract():
     else:
         datasetName = ncc
         stringDatasetName = 'ncc'
+
     for i in range(1,14):
         selectedScenario = 'scenario'+str(i)
         df = loadDataset(datasetName, selectedScenario)
