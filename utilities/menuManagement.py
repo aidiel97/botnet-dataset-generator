@@ -33,7 +33,7 @@ def executor(choose):
         merge()
         time.sleep(3) # adding 3 seconds time delay
         os.system("clear")
-        print("++++++| Extraction Process Success |++++++")
+        print("++++++| Merging Sensors Process Success |++++++")
         print("...back to menu...")
     elif(int(choose) == len(listMenu)):
         print("++++++| Exit |++++++")
