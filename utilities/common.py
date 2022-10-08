@@ -1,5 +1,12 @@
-import pandas as pd
-import pickle
+from utilities.globalConfig import *
+
+urlExtractData = URL_EXTRACTED_DATA+'ctu/'
+urlExtractDataNCC = URL_EXTRACTED_DATA+'ncc/'
+syntheticTime=SYNTHETIC_DATE+' '+SYNTHETIC_TIME
+limitTime=SYNTHETIC_DATE+' '+LIMIT_TIME
+datasetLocation = DATASET_LOCATION
+ctuLoc = CTU_DIR
+nccLoc = NCC_DIR
 
 #all CTU-13 dataset scenarios
 ctuOnline = {
@@ -18,8 +25,6 @@ ctuOnline = {
   'scenario13': 'https://mcfp.felk.cvut.cz/publicDatasets/CTU-Malware-Capture-Botnet-54/detailed-bidirectional-flow-labels/capture20110815-3.binetflow',
 }
 
-datasetLocation = '../../../0-botnetCollection/datasets'
-ctuLoc = '/CTU-13-Dataset'
 ctu = {
   'scenario1': datasetLocation+ctuLoc+'/1/capture20110810.binetflow',
   'scenario2': datasetLocation+ctuLoc+'/2/capture20110811.binetflow',
@@ -36,7 +41,6 @@ ctu = {
   'scenario13': datasetLocation+ctuLoc+'/13/capture20110815-3.binetflow',
 }
 
-nccLoc = '/NCC'
 ncc = {
   'scenario1': datasetLocation+nccLoc+'/scenario_dataset_1/dataset_result.binetflow',
   'scenario2': datasetLocation+nccLoc+'/scenario_dataset_2/dataset_result.binetflow',
@@ -53,19 +57,38 @@ ncc = {
   'scenario13': datasetLocation+nccLoc+'/scenario_dataset_13/dataset_result.binetflow',
 }
 
-def loadDataset(dataset, scenario):
-  fileName = dataset[scenario] #load dataset
-  raw_df=pd.read_csv(fileName)
-  return raw_df
+listMenu = [
+    "Extract Source Dataset",
+    "Start Simulation",
+    "Merging All Sensors",
+    "EXIT"
+]
 
-def loadSplitActivity(url, scenario, activity):
-  filename = url+str(scenario)+'/'+activity+'.csv'
-  print("Load: "+filename)
-  df = pd.read_csv(filename)
-  return df
+csvDType ={
+            'Dur': 'object',
+            'SrcBytes': 'object',
+            'TotBytes': 'object',
+            'TotPkts': 'object',
+            'ActivityLabel': 'object',
+            'dTos': 'object',
+            'sTos': 'object',
+            'SensorId': 'object',
+            'Dport':'object',
+            'Sport':'object'
+        }
 
-def loadSensorsData(url, sensorId):
-  filename = url+str(sensorId)+'.binetflow'
-  print("Load: "+filename)
-  df = pd.read_csv(filename)
-  return df
+botName = {
+    1:'neris',
+    2:'neris',
+    3: 'rbot',
+    4: 'rbot',
+    5: 'virut',
+    6: 'menti',
+    7: 'sogou',
+    8: 'murlo',
+    9: 'neris',
+    10: 'rbot',
+    11: 'rbot',
+    12: 'nsis.ay',
+    13: 'virut'
+}

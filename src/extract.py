@@ -1,22 +1,10 @@
+import os
+import pandas as pd
 import warnings
 warnings.filterwarnings('ignore')
-import pandas as pd
 
-botName = {
-    1:'neris',
-    2:'neris',
-    3: 'rbot',
-    4: 'rbot',
-    5: 'virut',
-    6: 'menti',
-    7: 'sogou',
-    8: 'murlo',
-    9: 'neris',
-    10: 'rbot',
-    11: 'rbot',
-    12: 'nsis.ay',
-    13: 'virut'
-}
+from utilities.dataLoader import *
+from utilities.common import *
 
 def splitActivity(datasetName, df, scenario):
     print("\n====================Extracting "+datasetName+" Scenario"+str(scenario)+" START==")
@@ -26,8 +14,6 @@ def splitActivity(datasetName, df, scenario):
 
     #create new label for bot prediciton(1/0)
     df['ActivityLabel'] = df['Label'].str.contains('botnet', case=False, regex=True).astype(int)
-    syntheticTime="2022/07/07 09:00:00.000"
-    limitTime="2022/07/07 17:00:01.000"
 
     #create new dataframe only botnet
     botnet = df['ActivityLabel'] == 1
@@ -54,11 +40,31 @@ def splitActivity(datasetName, df, scenario):
     normal_df_limited = normal_df[limitedNormal]
 
     #export botnet to csv
-    botnet_df_limited.to_csv('../extract/'+datasetName+'/'+str(scenario)+'/botnet.csv', index=False)
+    botnet_df_limited.to_csv('extract/'+datasetName+'/'+str(scenario)+'/botnet.csv', index=False)
     print('extract botnet scenario '+str(scenario)+' success!')
 
     #export normal to csv
-    normal_df_limited.to_csv('../extract/'+datasetName+'/'+str(scenario)+'/normal.csv', index=False)
+    normal_df_limited.to_csv('extract/'+datasetName+'/'+str(scenario)+'/normal.csv', index=False)
     print('extract normal scenario '+str(scenario)+' success!')
 
     print("====================Extracting "+datasetName+" Scenario"+str(scenario)+" END==")
+
+#extract
+def extract():
+    print("\n******************")
+    print("Dataset Option: ")
+    print("1. CTU-13")
+    print("2. NCC")
+    print("******************")
+    datasetChoose = input("Select Dataset:")
+    if(datasetChoose == "1"):
+        datasetName = ctu
+        stringDatasetName = 'ctu'
+    else:
+        datasetName = ncc
+        stringDatasetName = 'ncc'
+
+    for i in range(1,14):
+        selectedScenario = 'scenario'+str(i)
+        df = loadDataset(datasetName, selectedScenario)
+        splitActivity(stringDatasetName, df, i)
