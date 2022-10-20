@@ -1,5 +1,4 @@
-# botnetDatasetGenerator
-in supporting botnet paralel detection, the dataset is required. This is the research to generate the dataset
+# Botnet Dataset Generator
 
 Steps to execute the code are as follows:
 1. Install dotenv, pandas & dask libraries.
