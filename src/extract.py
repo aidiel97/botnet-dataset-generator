@@ -55,7 +55,10 @@ def extract():
     print("1. CTU-13")
     print("2. NCC")
     print("******************")
-    datasetChoose = input("Select Dataset:")
+    try:
+        datasetChoose = input("Select Dataset:")
+    except EOFError as e:
+        datasetChoose = '1'
     if(datasetChoose == "1"):
         datasetName = ctu
         stringDatasetName = 'ctu'
