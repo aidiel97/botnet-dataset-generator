@@ -46,5 +46,9 @@ def executor(choose):
 #menu
 def mainMenu():
     banner()
-    choose = input("Enter Menu: ")
+    try:
+        choose = input("Enter Menu: ")
+    except EOFError as e:
+        choose = '1'
+    
     executor(choose)
